@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* styles.css */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            /* position: sticky; */
+            top: 0;
+            z-index: 1000;
+        }
+
+        .hero {
+            height: 100vh;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            /* align-items: center; */
+            position: relative;
+            /* background: black; */
+        }
+
+        .bulb-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wire {
+            width: 3px;
+            height: calc(50% - 50px);
+            background-color: black;
+        }
+
+        .bulb {
+            width: 100px;
+            /* Adjust size as needed */
+            height: 100px;
+            /*transition: filter 0.5s;box-shadow 0.5s;*/
+            background-color: transparent;
+        }
+
+        .bulb.glow {
+            transition: filter 3s;
+            filter: brightness(1.5) drop-shadow(0 2px 50px yellow);
+            /* Simulates glowing effect */
+            /*box-shadow: 0 0 20px yellow;*/
+        }
+
+        .bulb.unglow {
+            transition: filter 3s;
+            filter: none;
+        }
+
+        .message {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+        }
+
+        #scroll-text {
+            font-size: 2rem;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero.dark {
+            background-color: black;
+            transition: all 2s ease-in-out;
+        }
+
+        .hero.light {
+            background-color: #ffffff;
+            transition: all 2s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1>Interactive Bulb</h1>
+    </nav>
+    <section class="hero">
+        <div class="bulb-container">
+            <div class="wire"></div>
+            <img src="https://assets.onecompiler.app/42kydqwfq/42zc2db3v/bulb-image.png" alt="Bulb" class="bulb"
+                id="bulb">
+        </div>
+    </section>
+    <section class="message">
+        <h2 id="scroll-text">Welcome to the Light!</h2>
+    </section>
+
+    <script>
+        // script.js
+        document.addEventListener('scroll', () => {
+            const bulb = document.querySelector('#bulb');
+            const scrollText = document.querySelector('#scroll-text');
+            const heroELement = document.querySelector('.hero');
+
+            // Check scroll position to toggle glow
+            const scrollPosition = window.scrollY;
+            const windowHeight = window.innerHeight;
+
+            if (scrollPosition > windowHeight / 5) {
+                heroELement.classList.remove('light')
+                heroELement.classList.add('dark');
+                bulb.classList.remove('unglow');
+                bulb.classList.add('glow');
+                bulb.src = "https://assets.onecompiler.app/42kydqwfq/42zc2db3v/light-bulb.png"
+            } else {
+                bulb.classList.remove('glow');
+                bulb.classList.add('unglow');
+                heroELement.classList.remove('dark')
+
+                heroELement.classList.add('light')
+                bulb.src = "	https://assets.onecompiler.app/42kydqwfq/42zc2db3v/bulb-image.png"
+            }
+
+            // Show text after bulb is glowing
+            if (scrollPosition > windowHeight && bulb.classList.contains('glow')) {
+                scrollText.style.opacity = 1;
+            } else {
+                scrollText.style.opacity = 0;
+            }
+        });
+
+    </script>
+</body>
+
+</html>
