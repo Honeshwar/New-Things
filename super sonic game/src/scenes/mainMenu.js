@@ -1,4 +1,5 @@
 import k from "../kaplayContext";
+import { makeSonic } from "../entities/sonic";
 
 
 export default function mainMenu() {
@@ -27,7 +28,7 @@ export default function mainMenu() {
                 k.pos(0, 0),
                 k.scale(2),
                 k.opacity(0.8),
-                k.area()//for detecting collision, debugging
+                k.area()//for detecting collision, debugging purpose
             ]),//return game object
             k.add([
                 k.sprite("chemical-bg"),
@@ -53,6 +54,23 @@ export default function mainMenu() {
                 k.scale(4)
             ])
         ]
+
+        // text display on scene
+        k.add([
+            k.text("SONIC RING RUN", { font: "mania", size: 96 }),
+            k.pos(k.center()),//k.center().x, 200
+            k.anchor("center"),
+        ])
+
+        k.add([
+            k.text("Press Space/Click/Touch to Play", { font: "mania", size: 32 }),
+            k.pos(k.center().x, k.center().y - 100),
+            k.anchor("center"),
+        ])
+
+        //adding sonic object to the scene
+        makeSonic(k.vec2(200, 745))//x,y
+
 
         // infinite background scrolling
         k.onUpdate(() => {

@@ -1,5 +1,6 @@
 // making context so, to avoid any conflict with other libraries methods names we use kaplay instance
 import k from "./kaplayContext";
+import { game } from "./scenes/game";
 import mainMenu from "./scenes/mainMenu";
 
 console.log(k);
@@ -52,17 +53,7 @@ k.scene("main-menu", mainMenu)
 
 
 // second scene: playing game
-k.scene('game', () => {
-  k.add([
-    k.sprite("sonic", { anim: "jump" }),
-    k.scale(4),
-    // k.area(),
-    // k.anchor("center"),
-    // k.pos(k.width() / 2, k.height() / 2),
-    // k.body({ speed: 1000 }),
-
-  ])
-})
+k.scene('game', game)
 
 
 // third scene: game over
@@ -70,3 +61,4 @@ k.scene('gameover', () => { })
 
 // with it help we can go from one scene to another or default scene also set
 k.go('main-menu');
+k.go('game');
