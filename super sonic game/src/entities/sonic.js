@@ -17,6 +17,8 @@ export function makeSonic(pos) {
 
         //can add different methods to this current game object
         {//keys of func is any name
+
+            scoreIncrementUI: null,
             setControls() {//arrow func dont have there own this, so sont use arrow func here
                 k.onButtonPress("jump", () => {
                     console.log(this);
@@ -33,6 +35,14 @@ export function makeSonic(pos) {
                 });
             }
         }
+    ])
+
+    // creating child game obj of sonic, for show score increment
+    sonic.scoreIncrementUI = sonic.add([//k.add= entire canvas ma add hoga game object , sonic.add= sonic game object ma add hoga as child
+        k.text('', { font: 'mania', size: 24 }),
+        k.color(255, 255, 0),
+        k.anchor('center'),
+        k.pos(30, -10)//position relative to sonic game object
     ])
 
     return sonic

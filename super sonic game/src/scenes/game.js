@@ -1,8 +1,11 @@
+import { makeEnemy } from "../entities/enemy";
+import { makeRings } from "../entities/rings";
 import { makeSonic } from "../entities/sonic";
 import k from "../kaplayContext";
 
 export function game() {
     k.setGravity(3100);//aaram se nicha aayanga
+    const citySound = k.play("city", { loop: true, volume: 0.5 });
 
     // const bgPieceWidth = 1920;
     // const height = 1080;
@@ -82,7 +85,23 @@ export function game() {
         ])
     ]
 
+
+
+
     let gameSpeed = 300;
+    let score = 0,
+        scoreMultiplier = 0// for enemy hit score
+    // create score game object
+    const scoreTextGameObject = k.add([
+        k.text("SCORE: " + score, { font: "mania", size: 72 }),
+        k.pos(20, 20),
+        k.area(),
+        k.scale(2)
+    ])
+    // scoreTextGameObject.onUpdate(() => {
+    //     scoreTextGameObject.text = "SCORE: " + score
+    // })
+
     k.loop(1, () => {//loop is method that call a function every 1 second or arg1 is time in minutes, arg2 is callback function
         gameSpeed += 50
     })
@@ -90,6 +109,49 @@ export function game() {
     const sonicGameObject = makeSonic(k.vec2(200, 745))//x,y
     sonicGameObject.setControls();
     sonicGameObject.setEvents()
+    //game object have onCollide method and it call onCollide callback function when it collide with other/any game object
+    // arg1 = tagname of other game object
+    sonicGameObject.onCollide('enemy', (enemy) => {//onCollide method pass enemy game object that collide as arg1
+
+        //when our hero collide with enemy but our hero is not in ground it jump on enemy
+        if (!sonicGameObject.isGrounded()) {
+            k.play('destroy', { volume: 0.5 })//to play sound
+            k.play('hyper-ring', { volume: 0.5 })//to play sound
+            k.destroy(enemy)//destroy enemy;
+            sonicGameObject.jump()//jump our hero from enemy top
+            scoreMultiplier += 1
+            score += score * scoreMultiplier
+
+            scoreTextGameObject.text = "SCORE: " + score
+            sonicGameObject.scoreIncrementUI.text = `x${scoreMultiplier}`
+
+            k.wait(1, () => {
+                sonicGameObject.scoreIncrementUI.text = ""
+            })
+
+            return
+        }
+
+        k.setData('current-score', score)
+        k.play('hurt', { volume: 0.5 })//to play sound
+
+        k.go("gameOver", { citySound })//pass city sound to game over scene because we want to stop city sound in gameover scene
+    })
+
+    //ring collision
+    sonicGameObject.onCollide('ring', (ring) => {
+        k.destroy(ring)//destroy enemy;
+        k.play('hyper-ring', { volume: 0.5 })//to play sound
+        score += 1
+        scoreTextGameObject.text = "SCORE: " + score
+        sonicGameObject.scoreIncrementUI.text = "+1"
+
+        k.wait(1, () => {
+            sonicGameObject.scoreIncrementUI.text = ""
+        })
+
+    })
+
 
     // making ground game object for sonic game object so  sonic obj can jump and on gravity it not fall down
     k.add([
@@ -102,7 +164,63 @@ export function game() {
         })
     ])
 
+
+    // enemy, spawn  means birth , birth of enemy
+    const spawnEnemy = () => {
+        const enemy = makeEnemy(k.vec2(1950, 773))
+
+        enemy.onUpdate(() => {
+            if (gameSpeed < 3000) {
+                enemy.move(-(gameSpeed + 300), 0);
+                return;
+            }
+            enemy.move(-gameSpeed, 0)
+        });
+
+        enemy.onExitScreen(() => {
+            // destroy enemy if it goes out of screen
+            if (enemy.pos.x < 0) k.destroy(enemy);
+        });
+
+        const waitTime = k.rand(0.5, 2.5);
+
+        k.wait(waitTime, spawnEnemy);// infinite recursion call, spawnEnemy()
+    }
+
+    spawnEnemy();
+
+
+    // create rings that our hero collect
+    const spawnRing = () => {
+        // console.log(k.vec2(1950, 745));
+        const ring = makeRings(k.vec2(1950, 745));//similar as {x:1950, y:745}
+        ring.onUpdate(() => {
+            if (gameSpeed < 3000) {
+                ring.move(-(gameSpeed + 300), 0);
+                return;
+            }
+            ring.move(-gameSpeed, 0)
+        });
+
+        ring.onExitScreen(() => {
+            // destroy ring if it goes out of screen
+            if (ring.pos.x < 0) k.destroy(ring);
+        });
+
+        const waitTime = k.rand(0.5, 2.5);
+
+        k.wait(waitTime, spawnRing);// infinite recursion call, spawnRing()
+
+    }
+
+    spawnRing();
+
+
+
+
     k.onUpdate(() => {
+
+        if (sonicGameObject.isGrounded()) scoreMultiplier = 0 // reset score multiplier when hero jump on ground after collide with one enemy
 
         if (chemicalBg[1].pos.x < 0) {
             chemicalBg[0].moveTo(chemicalBg[1].pos.x + chemicalBg[1].width * 2, -sonicGameObject.pos.y / 10 - 50)

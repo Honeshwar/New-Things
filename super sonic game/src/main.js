@@ -40,7 +40,7 @@ k.loadFont("mania", "fonts/mania.ttf");
 k.loadSound('destroy', 'sounds/destroy.wav');
 k.loadSound("hurt", "sounds/Hurt.wav");
 k.loadSound("hyper-ring", "sounds/HyperRing.wav");
-k.loadSound("jump", "sounds/jump.wav");
+k.loadSound("jump", "sounds/Jump.wav");
 k.loadSound("ring", "sounds/Ring.wav");
 k.loadSound("city", "sounds/city.mp3");
 
@@ -57,7 +57,12 @@ k.scene('game', game)
 
 
 // third scene: game over
-k.scene('gameover', () => { })
+k.scene('gameOver', () => {
+  k.add([
+    k.sprite("sonic", { anim: "jump" }),
+    k.pos(k.width() / 2, k.height() / 2),//K.WIDTH =  ENTIRE CANVAS WIDTH, K.HEIGHT = ENTIRE CANVAS HEIGHT
+  ])
+})
 
 // with it help we can go from one scene to another or default scene also set
 k.go('main-menu');
