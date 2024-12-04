@@ -157,7 +157,7 @@ export function game() {
     k.add([
         k.rect(1920, 300),
         k.pos(0, 832),
-        k.opacity(0.5),
+        k.opacity(0),
         k.area(),
         k.body({
             isStatic: true//fixed object
